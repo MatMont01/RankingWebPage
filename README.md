@@ -64,10 +64,6 @@ src/
 
 ### 1. Clona el repositorio
 
-```bash
-git clone https://github.com/tu-usuario/ranking-gamificado.git
-cd ranking-gamificado
-
 2. Backend
 
     Configura PostgreSQL y crea una base de datos (por ejemplo, rankingdb).
