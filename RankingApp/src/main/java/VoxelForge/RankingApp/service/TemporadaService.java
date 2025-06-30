@@ -1,3 +1,4 @@
+// Archivo: src/main/java/VoxelForge/RankingApp/service/TemporadaService.java
 package VoxelForge.RankingApp.service;
 
 import VoxelForge.RankingApp.model.Temporada;
@@ -22,6 +23,10 @@ public class TemporadaService {
 
     public Optional<Temporada> findById(Integer id) {
         return temporadaRepository.findById(id);
+    }
+
+    public Optional<Temporada> findTemporadaActiva() {
+        return temporadaRepository.findFirstByEstadoOrderByFechaInicioDesc("ACTIVA");
     }
 
     public Temporada save(Temporada temporada) {

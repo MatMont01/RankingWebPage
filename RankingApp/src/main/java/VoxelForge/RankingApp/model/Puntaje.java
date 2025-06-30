@@ -1,7 +1,7 @@
+// Archivo: src/main/java/VoxelForge/RankingApp/model/Puntaje.java
 package VoxelForge.RankingApp.model;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -11,18 +11,21 @@ public class Puntaje {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idPuntaje;
 
-    @ManyToOne
-    @JoinColumn(name = "id_persona")
-    private Persona persona;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_empleado", nullable = false)
+    private Empleado empleado;
 
-    @ManyToOne
-    @JoinColumn(name = "id_temporada")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_temporada", nullable = false)
     private Temporada temporada;
 
-    private Integer puntaje;
+    @Column(nullable = false)
+    private Integer puntajeTotal = 0;
+
+    @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime fechaActualizacion;
 
-    // Getters y setters
+    // Getters y Setters
     public Integer getIdPuntaje() {
         return idPuntaje;
     }
@@ -31,12 +34,12 @@ public class Puntaje {
         this.idPuntaje = idPuntaje;
     }
 
-    public Persona getPersona() {
-        return persona;
+    public Empleado getEmpleado() {
+        return empleado;
     }
 
-    public void setPersona(Persona persona) {
-        this.persona = persona;
+    public void setEmpleado(Empleado empleado) {
+        this.empleado = empleado;
     }
 
     public Temporada getTemporada() {
@@ -47,12 +50,12 @@ public class Puntaje {
         this.temporada = temporada;
     }
 
-    public Integer getPuntaje() {
-        return puntaje;
+    public Integer getPuntajeTotal() {
+        return puntajeTotal;
     }
 
-    public void setPuntaje(Integer puntaje) {
-        this.puntaje = puntaje;
+    public void setPuntajeTotal(Integer puntajeTotal) {
+        this.puntajeTotal = puntajeTotal;
     }
 
     public LocalDateTime getFechaActualizacion() {

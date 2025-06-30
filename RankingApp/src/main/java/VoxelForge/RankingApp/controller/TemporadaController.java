@@ -1,11 +1,12 @@
+// Archivo: src/main/java/VoxelForge/RankingApp/controller/TemporadaController.java
 package VoxelForge.RankingApp.controller;
 
 import VoxelForge.RankingApp.model.Temporada;
 import VoxelForge.RankingApp.service.TemporadaService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/temporadas")
@@ -22,9 +23,11 @@ public class TemporadaController {
         return temporadaService.findAll();
     }
 
-    @GetMapping("/{id}")
-    public Optional<Temporada> getById(@PathVariable Integer id) {
-        return temporadaService.findById(id);
+    @GetMapping("/activa")
+    public ResponseEntity<Temporada> getTemporadaActiva() {
+        return temporadaService.findTemporadaActiva()
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
@@ -33,13 +36,21 @@ public class TemporadaController {
     }
 
     @PutMapping("/{id}")
-    public Temporada update(@PathVariable Integer id, @RequestBody Temporada temporada) {
-        temporada.setIdTemporada(id);
-        return temporadaService.save(temporada);
+    public ResponseEntity<Temporada> update(@PathVariable Integer id, @RequestBody Temporada temporadaDetails) {
+        return temporadaService.findById(id)
+                .map(temporada -> {
+                    temporada.setNombre(temporadaDetails.getNombre());
+                    temporada.setFechaInicio(temporadaDetails.getFechaInicio());
+                    temporada.setFechaFin(temporadaDetails.getFechaFin());
+                    temporada.setEstado(temporadaDetails.getEstado());
+                    return ResponseEntity.ok(temporadaService.save(temporada));
+                })
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Integer id) {
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
         temporadaService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }

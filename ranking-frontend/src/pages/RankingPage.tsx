@@ -1,56 +1,63 @@
-import {useEffect, useState} from "react";
-import {getPuntajes, type Puntaje} from "../services/puntajeService";
-import {getTemporadas, type Temporada} from "../services/temporadaService";
-import {type Persona} from "../services/personaService";
+// Archivo: src/pages/RankingPage.tsx
 
-const MEDALS = ["🏆", "🥈", "🥉"];
+import {useEffect, useState} from "react";
+import {getRankingPorTemporada, type Puntaje} from "../services/rankingService";
+import {getTemporadas, getTemporadaActiva, type Temporada} from "../services/temporadaService";
+
+const MEDALS = ["🥇", "🥈", "🥉"];
 
 export default function RankingPage() {
     const [ranking, setRanking] = useState<Puntaje[]>([]);
     const [temporadas, setTemporadas] = useState<Temporada[]>([]);
-    const [temporadaId, setTemporadaId] = useState<number | "">("");
-    const [loading, setLoading] = useState(false);
+    const [temporadaSeleccionada, setTemporadaSeleccionada] = useState<Temporada | null>(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchTemporadas = async () => {
-            const temp = await getTemporadas();
-            setTemporadas(temp);
-            const activa = temp.find(t => t.estado === "ACTIVA") || temp[0];
-            setTemporadaId(activa?.idTemporada ?? "");
-        };
-        fetchTemporadas();
+        const CargarDatosIniciales = async () => {
+            try {
+                const todasTemporadas = await getTemporadas();
+                setTemporadas(todasTemporadas);
+
+                const activa = await getTemporadaActiva();
+                setTemporadaSeleccionada(activa);
+            } catch (error) {
+                console.warn("No se encontró una temporada activa por defecto.");
+                setLoading(false);
+            }
+        }
+        CargarDatosIniciales();
     }, []);
 
     useEffect(() => {
-        if (!temporadaId) return;
+        if (!temporadaSeleccionada) {
+            setRanking([]);
+            return;
+        }
+        ;
+
         setLoading(true);
-        getPuntajes().then(data => {
-            const rankingActual = data
-                .filter(p => {
-                    if ("idTemporada" in p.temporada) {
-                        return p.temporada.idTemporada === Number(temporadaId);
-                    } else {
-                        return (p.temporada as Temporada).idTemporada === Number(temporadaId);
-                    }
-                })
-                .sort((a, b) => b.puntaje - a.puntaje);
-            setRanking(rankingActual);
-            setLoading(false);
-        });
-    }, [temporadaId]);
+        getRankingPorTemporada(temporadaSeleccionada.idTemporada)
+            .then(setRanking)
+            .finally(() => setLoading(false));
+    }, [temporadaSeleccionada]);
+
+    const handleTemporadaChange = (id: number) => {
+        const temporada = temporadas.find(t => t.idTemporada === id);
+        setTemporadaSeleccionada(temporada || null);
+    }
 
     return (
-        <div className="max-w-3xl mx-auto p-6 dark:bg-gray-900 min-h-screen transition-colors duration-300">
+        <div className="max-w-3xl mx-auto p-6">
             <h1 className="text-3xl font-bold mb-8 text-center text-gray-800 dark:text-yellow-400">
-                🏅 Ranking Gamificado
+                🏆 Ranking de Empleados
             </h1>
-            <div className="flex items-center justify-between mb-8">
-                <span className="font-semibold text-gray-700 dark:text-gray-300">Temporada:</span>
+            <div className="flex items-center justify-end mb-8">
                 <select
                     className="border rounded px-3 py-2 bg-gray-50 dark:bg-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600 focus:outline-none"
-                    value={temporadaId}
-                    onChange={e => setTemporadaId(Number(e.target.value))}
+                    value={temporadaSeleccionada?.idTemporada || ""}
+                    onChange={e => handleTemporadaChange(Number(e.target.value))}
                 >
+                    <option value="" disabled>Selecciona una temporada</option>
                     {temporadas.map(t => (
                         <option key={t.idTemporada} value={t.idTemporada}>
                             {t.nombre}
@@ -60,9 +67,10 @@ export default function RankingPage() {
             </div>
 
             {loading ? (
-                <div className="text-gray-700 dark:text-gray-300">Cargando ranking...</div>
+                <div className="text-center text-gray-700 dark:text-gray-300">Cargando ranking...</div>
             ) : ranking.length === 0 ? (
-                <div className="text-gray-600 dark:text-gray-400">No hay puntajes para esta temporada.</div>
+                <div className="text-center text-gray-600 dark:text-gray-400 py-10">No hay puntajes para esta
+                    temporada.</div>
             ) : (
                 <ol className="space-y-3">
                     {ranking.map((p, idx) => (
@@ -76,21 +84,18 @@ export default function RankingPage() {
                                     : idx === 2
                                         ? "bg-orange-100 border-orange-400 dark:bg-orange-900 dark:border-orange-600"
                                         : "bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-700"
-                            }
-                            `}
+                            }`}
                         >
-                            <div className="flex items-center gap-3">
-                                <span className={`text-2xl w-8 text-center`}>
+                            <div className="flex items-center gap-4">
+                                <span className="text-2xl w-10 text-center font-bold">
                                     {idx < 3 ? MEDALS[idx] : idx + 1}
                                 </span>
-                                <span className="font-medium text-gray-800 dark:text-gray-100">
-                                    {"nombre" in p.persona
-                                        ? (p.persona as Persona).nombre
-                                        : p.persona.idPersona}
+                                <span className="font-medium text-lg text-gray-800 dark:text-gray-100">
+                                    {p.empleado.nombre}
                                 </span>
                             </div>
                             <span className="text-xl font-bold text-blue-700 dark:text-blue-400">
-                                {p.puntaje} pts
+                                {p.puntajeTotal} pts
                             </span>
                         </li>
                     ))}

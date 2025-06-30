@@ -1,7 +1,7 @@
+// Archivo: src/main/java/VoxelForge/RankingApp/model/Temporada.java
 package VoxelForge.RankingApp.model;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDate;
 
 @Entity
@@ -11,12 +11,19 @@ public class Temporada {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idTemporada;
 
+    @Column(nullable = false, length = 50)
     private String nombre;
+
+    @Column(nullable = false)
     private LocalDate fechaInicio;
+
+    @Column(nullable = false)
     private LocalDate fechaFin;
+
+    @Column(nullable = false, length = 10)
     private String estado;
 
-    // Getters y setters
+    // Getters y Setters
     public Integer getIdTemporada() {
         return idTemporada;
     }

@@ -1,15 +1,18 @@
 import {API} from './api';
 
 export interface Temporada {
-    idTemporada?: number;
+    idTemporada: number;
     nombre: string;
-    fechaInicio: string;
-    fechaFin: string;
-    estado: string;
+    fechaInicio: string; // Formato YYYY-MM-DD
+    fechaFin: string;    // Formato YYYY-MM-DD
+    estado: 'ACTIVA' | 'INACTIVA' | 'FINALIZADA';
 }
 
 export const getTemporadas = () => API.get<Temporada[]>('/temporadas').then(res => res.data);
-export const getTemporada = (id: number) => API.get<Temporada>(`/temporadas/${id}`).then(res => res.data);
-export const createTemporada = (data: Temporada) => API.post<Temporada>('/temporadas', data).then(res => res.data);
-export const updateTemporada = (id: number, data: Temporada) => API.put<Temporada>(`/temporadas/${id}`, data).then(res => res.data);
-export const deleteTemporada = (id: number) => API.delete(`/temporadas/${id}`).then(res => res.data);
+
+export const getTemporadaActiva = () => API.get<Temporada>('/temporadas/activa').then(res => res.data);
+
+export const createTemporada = (data: Omit<Temporada, 'idTemporada'>) =>
+    API.post<Temporada>('/temporadas', data).then(res => res.data);
+
+export const deleteTemporada = (id: number) => API.delete(`/temporadas/${id}`);
