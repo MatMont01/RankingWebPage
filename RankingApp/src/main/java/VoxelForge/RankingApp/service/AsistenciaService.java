@@ -52,10 +52,9 @@ public class AsistenciaService {
     public void verificarAsistenciaPerfectaMensual() {
         System.out.println("--- Iniciando Job de Verificación de Asistencia Perfecta ---");
 
-        // 1. Determinar el mes anterior
         YearMonth mesAnterior = YearMonth.now().minusMonths(1);
 
-        // 2. Obtener la temporada activa (si no hay, no se pueden dar puntos)
+        // Obtener la temporada activa (si no hay, no se pueden dar puntos)
         Temporada temporadaActiva = temporadaService.findTemporadaActiva()
                 .orElse(null);
 
@@ -64,11 +63,11 @@ public class AsistenciaService {
             return;
         }
 
-        // 3. Obtener la lista de todos los empleados
+        // Obtener la lista de todos los empleados
         List<Empleado> empleados = empleadoService.findAll();
 
         for (Empleado empleado : empleados) {
-            // 4. Obtener todos los días laborables (Lunes a Viernes) del mes anterior
+            //Obtener todos los días laborables (Lunes a Viernes) del mes anterior
             Set<LocalDate> diasLaborables = mesAnterior.atDay(1).datesUntil(mesAnterior.atEndOfMonth().plusDays(1))
                     .filter(date -> date.getDayOfWeek() != DayOfWeek.SATURDAY && date.getDayOfWeek() != DayOfWeek.SUNDAY)
                     .collect(Collectors.toSet());
@@ -77,7 +76,7 @@ public class AsistenciaService {
                 continue; // No hay días laborables en el mes, pasar al siguiente empleado
             }
 
-            // 5. Obtener los registros de asistencia PUNTUAL del empleado para ese mes
+            // Obtener los registros de asistencia PUNTUAL del empleado para ese mes
             List<Asistencia> asistenciasDelMes = findAsistenciasDeEmpleadoEnMes(
                     empleado.getIdEmpleado(), mesAnterior.getYear(), mesAnterior.getMonthValue()
             );
@@ -91,12 +90,12 @@ public class AsistenciaService {
             if (diasAsistidosPuntualmente.containsAll(diasLaborables)) {
                 System.out.println("¡Asistencia perfecta para " + empleado.getNombre() + "! Otorgando 20 puntos.");
 
-                // 7. Otorgar los puntos
+                //  Otorgar los puntos
                 String descripcion = "Bono por asistencia perfecta en " + mesAnterior.getMonth().toString() + " " + mesAnterior.getYear();
                 puntajeService.otorgarPuntos(
                         empleado,
                         temporadaActiva,
-                        20, // Puntos a otorgar
+                        20,
                         "Puntualidad Mensual",
                         descripcion,
                         null // No hay un ID de referencia específico para este evento
