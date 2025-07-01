@@ -1,5 +1,3 @@
-// Archivo: src/pages/EmpleadosPage.tsx
-
 import {useEffect, useState} from "react";
 import {getEmpleados, deleteEmpleado, type Empleado} from "../services/empleadoService";
 

@@ -1,5 +1,3 @@
-// Archivo: src/services/historialService.ts
-
 import { API } from './api';
 import type { Empleado } from './empleadoService';
 

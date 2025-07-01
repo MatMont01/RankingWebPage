@@ -1,5 +1,3 @@
-// Archivo: src/services/eventoPuntajeService.ts
-
 import {API} from './api';
 import type {Empleado} from './empleadoService';
 

@@ -1,5 +1,3 @@
-// Archivo: src/pages/CursosPage.tsx
-
 import {useEffect, useState, type FormEvent} from "react";
 import {getCursos, createCurso, type Curso} from "../services/cursoService";
 

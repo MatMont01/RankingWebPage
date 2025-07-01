@@ -12,10 +12,6 @@ public class JacksonConfig {
     @Bean
     public Module hibernate6Module() {
         Hibernate6Module module = new Hibernate6Module();
-
-        // --- ¡AQUÍ ESTÁ LA CORRECCIÓN! ---
-        // Habilitamos la característica para forzar la carga de relaciones "lazy"
-        // antes de que Jackson las convierta a JSON.
         module.enable(Hibernate6Module.Feature.FORCE_LAZY_LOADING);
 
         return module;

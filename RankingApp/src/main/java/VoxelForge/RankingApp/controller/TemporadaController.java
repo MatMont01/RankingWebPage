@@ -1,4 +1,3 @@
-// Archivo: src/main/java/VoxelForge/RankingApp/controller/TemporadaController.java
 package VoxelForge.RankingApp.controller;
 
 import VoxelForge.RankingApp.model.Temporada;
@@ -7,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/temporadas")
@@ -52,5 +52,26 @@ public class TemporadaController {
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         temporadaService.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Temporada> patch(@PathVariable Integer id, @RequestBody Temporada partial) {
+        return temporadaService.patchTemporada(id, partial)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PatchMapping("/{id}/estado")
+    public ResponseEntity<Temporada> patchEstado(@PathVariable Integer id, @RequestBody Map<String, String> body) {
+        String nuevoEstado = body.get("estado");
+        if (nuevoEstado == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        return temporadaService.findById(id)
+                .map(temporada -> {
+                    temporada.setEstado(nuevoEstado);
+                    return ResponseEntity.ok(temporadaService.save(temporada));
+                })
+                .orElse(ResponseEntity.notFound().build());
     }
 }

@@ -1,10 +1,7 @@
-// Archivo: src/routes/index.tsx
-
 import {Navigate, Route, Routes} from "react-router-dom";
 import {ProtectedRoute} from './ProtectedRoute';
 import {useAuth} from "../context/AuthContext";
 
-// --- Importamos TODAS las páginas que hemos creado ---
 import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
 import NotFoundPage from "../pages/NotFoundPage";
@@ -17,8 +14,6 @@ import HistorialEventosPage from "../pages/HistorialEventosPage";
 import AsistenciasPage from "../pages/AsistenciasPage";
 import type {JSX} from "react";
 
-// Un componente para manejar las rutas públicas y evitar que un usuario logueado
-// visite /login o /register
 const PublicRoute = ({children}: { children: JSX.Element }) => {
     const {isAuthenticated} = useAuth();
     return isAuthenticated ? <Navigate to="/"/> : children;

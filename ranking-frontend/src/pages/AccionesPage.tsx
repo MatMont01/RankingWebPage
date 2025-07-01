@@ -1,5 +1,3 @@
-// Archivo: src/pages/AccionesPage.tsx
-
 import {useEffect, useState, type FormEvent} from "react";
 import {getEmpleados, type Empleado} from "../services/empleadoService";
 import {getCursos, completarCurso, type Curso} from "../services/cursoService";

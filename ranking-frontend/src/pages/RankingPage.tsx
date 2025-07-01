@@ -1,5 +1,3 @@
-// Archivo: src/pages/RankingPage.tsx
-
 import {useEffect, useState} from "react";
 import {getRankingPorTemporada, type Puntaje} from "../services/rankingService";
 import {getTemporadas, getTemporadaActiva, type Temporada} from "../services/temporadaService";

@@ -10,7 +10,7 @@ export interface Curso {
 export interface CursoCompletadoRequest {
     idEmpleado: number;
     idCurso: number;
-    fechaCompletado: string; // Formato YYYY-MM-DD
+    fechaCompletado: string;
 }
 
 export const getCursos = () => API.get<Curso[]>('/cursos').then(res => res.data);

@@ -36,4 +36,14 @@ public class TemporadaService {
     public void deleteById(Integer id) {
         temporadaRepository.deleteById(id);
     }
+
+    public Optional<Temporada> patchTemporada(Integer id, Temporada partial) {
+        return findById(id).map(temporada -> {
+            if (partial.getNombre() != null) temporada.setNombre(partial.getNombre());
+            if (partial.getFechaInicio() != null) temporada.setFechaInicio(partial.getFechaInicio());
+            if (partial.getFechaFin() != null) temporada.setFechaFin(partial.getFechaFin());
+            if (partial.getEstado() != null) temporada.setEstado(partial.getEstado());
+            return save(temporada);
+        });
+    }
 }

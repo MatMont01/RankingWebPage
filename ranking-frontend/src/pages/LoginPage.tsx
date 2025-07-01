@@ -1,5 +1,3 @@
-// Archivo: src/pages/LoginPage.tsx
-
 import {useState, type FormEvent} from 'react';
 import {useAuth} from '../context/AuthContext';
 import {useNavigate, useLocation, Link} from 'react-router-dom';

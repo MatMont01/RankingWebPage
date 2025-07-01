@@ -1,12 +1,10 @@
-// Archivo: src/pages/HistorialEventosPage.tsx
-
 import {useEffect, useState} from "react";
 import {getHistorialEventosPorEmpleado, type EventoPuntaje} from "../services/historialService";
 import {getEmpleadoPorUsuario, type Empleado} from "../services/empleadoService";
 import {useAuth} from "../context/AuthContext";
 
 export default function HistorialEventosPage() {
-    const {user} = useAuth(); // Obtenemos el usuario logueado del contexto
+    const {user} = useAuth();
     const [eventos, setEventos] = useState<EventoPuntaje[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -22,10 +20,8 @@ export default function HistorialEventosPage() {
             setLoading(true);
             setError('');
             try {
-                // 1. Obtenemos los datos completos del empleado, incluyendo su ID
                 const empleado: Empleado = await getEmpleadoPorUsuario(user.usuario);
 
-                // 2. Usamos el ID para pedir su historial de eventos personal
                 const data = await getHistorialEventosPorEmpleado(empleado.idEmpleado);
                 setEventos(data);
 
@@ -38,7 +34,7 @@ export default function HistorialEventosPage() {
         };
 
         fetchHistorial();
-    }, [user]); // Se ejecuta cuando el usuario se carga
+    }, [user]);
 
     const formatDate = (dateString: string) => {
         return new Date(dateString).toLocaleString('es-BO', {
